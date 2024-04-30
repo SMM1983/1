@@ -1,0 +1,227 @@
+new
+
+config fluid
+
+gen zone brick p0 0,0,0 p1 940,0,0 p2 0,1400,0 p3 0,0,20 p4 940,1400,0 p5 0,1400,20 p6 940,0,20 p7 940,1400,20
+
+group zone Fundation range z 0 20 
+
+gen zone brick p0 0,0,20 p1 940,0,20 p2 0,1400,20 p3 0,0,70 p4 940,1400,20 p5 0,1400,70 p6 940,0,70 p7 940,1400,70
+
+group zone Aluvial range z 20 70
+
+gen zone brick size 10 10 60 p0 0,0,70 p1 100,0,70 p2 0,1400,70 p3 0,0,320 p4 100,1400,70 p5 0,1400,320 p6 50,0,320 p7 50,1400,320
+
+group zone Rockwall range x 0 100 y 0 1400 z 70 320
+
+gen zone brick size 10 10 60 p0 840,0,70 p1 940,0,70 p2 840,1400,70 p3 890,0,320 p4 940,1400,70 p5 890,1400,320 p6 940,0,320 p7 940,1400,320
+
+group zone Rockwall range x 840 940 y 0 1400 z 70 320
+
+gen zone brick p0 100,136,70 p1 840,136,70 p2 100,1263,70 p3 94,226,100 p4 840,1263,70 p5 94,1182,100 p6 846,226,100 p7 846,1182,100
+
+group zone Layer1 range x 94 840 y 136 1263 z 70 100
+
+gen zone brick p0 94,226,100 p1 846,226,100 p2 94,1152,100 p3 88,316,130 p4 846,1152,100 p5 88,1071,130 p6 852,316,130 p7 852,1071,130
+
+group zone Layer2 range x 88 846 y 226 1152 z 100 130
+
+gen zone brick p0 88,341,130 p1 852,341,130 p2 88,1071,130 p3 82,431,160 p4 852,1071,130 p5 82,990,160 p6 858,431,160 p7 858,990,160
+
+group zone Layer3 range x 82 852 y 341 1071 z 130 160
+
+gen zone brick p0 82,431,160 p1 858,431,160 p2 82,975,160 p3 76,521,190 p4 858,975,160 p5 76,894,190 p6 864,521,190 p7 864,894,190 
+
+group zone Layer4 range x 76 858 y 431 975 z 160 190
+
+gen zone brick p0 76,531,190 p1 864,531,190 p2 76,894,190 p3 70,621,220 p4 864,894,190 p5 70,813,220 p6 870,621,220 p7 870,813,220
+
+group zone Layer5 range x 70 864 y 531 894 z 190 220
+
+gen zone brick p0 70,621,220 p1 870,621,220 p2 70,808,220 p3 64,711,250 p4 870,808,220 p5 64,727,250 p6 876,711,250 p7 876,727,250
+
+group zone Layer6 range x 64 870 y 621 808 z 220 250
+
+pl zone
+
+interface 1 face range plane dip 22 dd 270 origin 796 137 0
+
+inter 1  prop  kn  300e9  ks  300e9  tens  1e10  SBRATIO = 1
+
+interface 2 face range plane dip 68 dd 90 origin 200 137 0
+
+inter 2  prop  kn  300e9  ks  300e9  tens  1e10  SBRATIO = 1
+
+;mechanical  model
+
+model mech cysoil range z 70 320
+
+property bulk 3000000000 sh 1500000000 den 2300 
+
+model mech mohr range z 0 70
+
+property bulk 8800000000 sh 4300000000 den 2400
+
+ini density 2300
+
+;fluid flow model
+
+model fluid fl_iso
+
+prop perm 1e-14 poros 0.5
+
+ini fmod 2000000000
+
+ini ftens -500000
+
+ini fdens 1000
+
+model fluid fl_anisotropic
+
+;initial and boundary conditions
+
+set gravity 0 0 -10
+
+water dens 1000
+
+water table ori 0,0,197 norm 0,0,-1
+
+ini pp 100000
+
+ini szz -460000 grad 0,0,220000
+
+ini sxx -460000 grad 0,0,220000
+
+ini syy -460000 grad 0,0,220000
+
+ini xvel=0 yvel=0 zvel=0
+
+ini xdis=0 ydis=0 zdis=0
+
+fix x range x 63 101
+
+fix x range x 839 877
+
+fix y range z 69 71
+
+fix z range y 136 137
+
+fix z range y 1262 1264
+
+apply nstress -400000 range x 94 846 y 70 250 z 0 150
+
+apply nstress -400000 range x 64 876 y 70 250 z 0 150
+
+apply nstress -200000 range plane dip 18 dd 270 origin 0 137 0
+
+;setting
+
+set fluid off mech on
+
+;hist and unbal
+
+Ini  xd  0.0  yd  0.0  zd  0.0
+
+hist add gp zdisp 996 0 50 ;hist 1
+
+hist add gp zdisp 454 288 641 ;hist 2
+
+hist add gp zdisp 284 315 332 ;hist 3
+
+hist add gp zdisp 456 172 1172 ;hist 4
+
+hist add gp zdisp 956 197 30 ;hist 5
+
+hist add gp zdisp 569 148 1185 ;hist 6
+
+hist add gp zdisp 936 0 71 ;hist 7
+
+hist add gp zdisp 894 0 165 ;hist 8
+
+hist add gp zdisp 650 290 675 ;hist 9
+
+hist add gp zdisp 652 174 204 ;hist 10
+
+hist add gp zdisp 286 171 1177 ;hist 11
+
+hist add gp zdisp 374 291 186 ;hist 12
+
+hist add gp zdisp 651 317 892 ;hist 13
+
+hist add gp zdisp 490 257 495 ;hist 14
+
+hist add gp zdisp 791 711 250 ;hist 15
+
+hist add gp zdisp 788 743 243 ;hist 16
+
+hist add gp zdisp 776 759 238 ;hist 17
+
+hist add gp zdisp 762 288 379 ;hist 18
+
+hist add gp zdisp 353 198 229 ;hist 19
+
+hist add gp zdisp 414 282 1218 ;hist 20
+
+hist add fltime
+
+hist add gp pp 250,200,1050 ;hist 21
+
+set fluid on
+
+set mech force 5
+
+set fluid substep 5
+
+set mech substep 5 auto 
+
+;slave
+
+step 1000
+
+solve age 500
+
+;Plot
+
+pl hist 1
+
+pl hist 2
+
+pl hist 3
+
+pl hist 4
+
+pl hist 5
+
+pl hist 6
+
+pl hist 7
+
+pl hist 8
+
+pl hist 9
+
+pl hist 10
+
+pl hist 11
+
+pl hist 12
+
+pl hist 13
+
+pl hist 14
+
+pl hist 15
+
+pl hist 16
+
+pl hist 17
+
+pl hist 18
+
+pl hist 19
+
+pl hist 20
+
+pl hist 21
+
+pl cont zdisp
